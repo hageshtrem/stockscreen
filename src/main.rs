@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+static CHROME_USER_AGENT: &str = r"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36";
+
 const URL: &'static str = r"https://query2.finance.yahoo.com/v10/finance/quoteSummary/MOEX.ME?formatted=true&crumb=th3yI76E9D%2F&lang=en-US&region=US&modules=incomeStatementHistory%2CcashflowStatementHistory%2CbalanceSheetHistory%2CincomeStatementHistoryQuarterly%2CcashflowStatementHistoryQuarterly%2CbalanceSheetHistoryQuarterly&corsDomain=finance.yahoo.com";
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -108,7 +110,10 @@ struct Value {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let resp = reqwest::get(URL).await?.json::<Response>().await?;
+    let client = reqwest::Client::builder()
+        .user_agent(CHROME_USER_AGENT)
+        .build()?;
+    let resp = client.get(URL).send().await?.json::<Response>().await?;
     println!("{:#?}", resp);
     Ok(())
 }
