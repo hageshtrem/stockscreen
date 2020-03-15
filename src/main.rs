@@ -19,8 +19,8 @@ struct QuoteSummary {
 struct ReportResult {
     incomeStatementHistory: IncomeStatementHistory,
     incomeStatementHistoryQuarterly: IncomeStatementHistory,
-    // balanceSheetHistory: BalanceSheetHistory,
-    // balanceSheetHistoryQuarterly: BalanceSheetHistory,
+    balanceSheetHistory: BalanceSheetHistory,
+    balanceSheetHistoryQuarterly: BalanceSheetHistory,
     // cashflowStatementHistory:
     // cashflowStatementHistoryQuarterly:
 }
@@ -59,6 +59,43 @@ struct IncomeStatementHistoryElement {
     otherItems: Option<Value>,
     netIncome: Value,
     netIncomeApplicableToCommonShares: Value,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct BalanceSheetHistory {
+    balanceSheetStatements: Vec<BalanceSheetStatement>,
+    maxAge: u32,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct BalanceSheetStatement {
+    maxAge: u32,
+    endDate: Value,
+    cash: Value,
+    netReceivables: Value,
+    otherCurrentAssets: Value,
+    totalCurrentAssets: Value,
+    propertyPlantEquipment: Value,
+    goodWill: Value,
+    intangibleAssets: Value,
+    otherAssets: Value,
+    deferredLongTermAssetCharges: Value,
+    totalAssets: Value,
+    accountsPayable: Value,
+    otherCurrentLiab: Value,
+    otherLiab: Value,
+    minorityInterest: Value,
+    totalCurrentLiabilities: Value,
+    totalLiab: Value,
+    commonStock: Value,
+    retainedEarnings: Value,
+    treasuryStock: Value,
+    capitalSurplus: Value,
+    otherStockholderEquity: Value,
+    totalStockholderEquity: Value,
+    netTangibleAssets: Value,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
