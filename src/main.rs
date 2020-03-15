@@ -23,8 +23,8 @@ struct ReportResult {
     incomeStatementHistoryQuarterly: IncomeStatementHistory,
     balanceSheetHistory: BalanceSheetHistory,
     balanceSheetHistoryQuarterly: BalanceSheetHistory,
-    // cashflowStatementHistory:
-    // cashflowStatementHistoryQuarterly:
+    cashflowStatementHistory: CashflowStatementHistory,
+    cashflowStatementHistoryQuarterly: CashflowStatementHistory,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -45,8 +45,8 @@ struct IncomeStatementHistoryElement {
     researchDevelopment: Option<Value>,
     sellingGeneralAdministrative: Value,
     nonRecurring: Option<Value>,
-    otherOperationExpenses: Option<Value>,
-    totalOperationExpenses: Option<Value>,
+    otherOperatingExpenses: Value,
+    totalOperatingExpenses: Value,
     operatingIncome: Value,
     totalOtherIncomeExpenseNet: Value,
     ebit: Value,
@@ -57,7 +57,7 @@ struct IncomeStatementHistoryElement {
     netIncomeFromContinuingOps: Value,
     discontinuedOperations: Option<Value>,
     extraordinaryItems: Option<Value>,
-    effectOfAccountingChanges: Option<Value>,
+    effectOfAccountingCharges: Option<Value>,
     otherItems: Option<Value>,
     netIncome: Value,
     netIncomeApplicableToCommonShares: Value,
@@ -98,6 +98,34 @@ struct BalanceSheetStatement {
     otherStockholderEquity: Value,
     totalStockholderEquity: Value,
     netTangibleAssets: Value,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct CashflowStatementHistory {
+    cashflowStatements: Vec<CashflowStatement>,
+    maxAge: u32,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct CashflowStatement {
+    maxAge: u32,
+    endDate: Value,
+    netIncome: Value,
+    depreciation: Value,
+    changeToNetincome: Value,
+    changeToLiabilities: Value,
+    changeToOperatingActivities: Value,
+    totalCashFromOperatingActivities: Value,
+    capitalExpenditures: Value,
+    investments: Value,
+    totalCashflowsFromInvestingActivities: Value,
+    dividendsPaid: Option<Value>,
+    netBorrowings: Value,
+    totalCashFromFinancingActivities: Value,
+    effectOfExchangeRate: Value,
+    changeInCash: Value,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
