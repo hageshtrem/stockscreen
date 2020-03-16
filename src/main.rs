@@ -2,8 +2,6 @@ use serde::{Deserialize, Serialize};
 
 static CHROME_USER_AGENT: &str = r"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36";
 
-const URL: &'static str = r"https://query2.finance.yahoo.com/v10/finance/quoteSummary/MOEX.ME?formatted=true&crumb=th3yI76E9D%2F&lang=en-US&region=US&modules=incomeStatementHistory%2CcashflowStatementHistory%2CbalanceSheetHistory%2CincomeStatementHistoryQuarterly%2CcashflowStatementHistoryQuarterly%2CbalanceSheetHistoryQuarterly&corsDomain=finance.yahoo.com";
-
 #[derive(Serialize, Deserialize, Debug)]
 #[allow(non_snake_case)]
 struct Response {
@@ -76,26 +74,31 @@ struct BalanceSheetStatement {
     maxAge: u32,
     endDate: Value,
     cash: Value,
+    shortTermInvestments: Option<Value>,
     netReceivables: Value,
+    inventory: Option<Value>,
     otherCurrentAssets: Value,
     totalCurrentAssets: Value,
+    longTermInvestments: Option<Value>,
     propertyPlantEquipment: Value,
-    goodWill: Value,
-    intangibleAssets: Value,
+    goodWill: Option<Value>,
+    intangibleAssets: Option<Value>,
     otherAssets: Value,
-    deferredLongTermAssetCharges: Value,
+    deferredLongTermAssetCharges: Option<Value>,
     totalAssets: Value,
     accountsPayable: Value,
+    shortLongTermDebt: Option<Value>,
     otherCurrentLiab: Value,
+    longTermDebt: Option<Value>,
     otherLiab: Value,
     minorityInterest: Value,
     totalCurrentLiabilities: Value,
     totalLiab: Value,
     commonStock: Value,
-    retainedEarnings: Value,
-    treasuryStock: Value,
-    capitalSurplus: Value,
-    otherStockholderEquity: Value,
+    retainedEarnings: Option<Value>,
+    treasuryStock: Option<Value>,
+    capitalSurplus: Option<Value>,
+    otherStockholderEquity: Option<Value>,
     totalStockholderEquity: Value,
     netTangibleAssets: Value,
 }
@@ -113,19 +116,23 @@ struct CashflowStatement {
     maxAge: u32,
     endDate: Value,
     netIncome: Value,
-    depreciation: Value,
-    changeToNetincome: Value,
-    changeToLiabilities: Value,
-    changeToOperatingActivities: Value,
-    totalCashFromOperatingActivities: Value,
-    capitalExpenditures: Value,
-    investments: Value,
-    totalCashflowsFromInvestingActivities: Value,
+    depreciation: Option<Value>,
+    changeToNetincome: Option<Value>,
+    changeToAccountReceivables: Option<Value>,
+    changeToLiabilities: Option<Value>,
+    changeToOperatingActivities: Option<Value>,
+    totalCashFromOperatingActivities: Option<Value>,
+    capitalExpenditures: Option<Value>,
+    investments: Option<Value>,
+    totalCashflowsFromInvestingActivities: Option<Value>,
     dividendsPaid: Option<Value>,
-    netBorrowings: Value,
-    totalCashFromFinancingActivities: Value,
-    effectOfExchangeRate: Value,
-    changeInCash: Value,
+    netBorrowings: Option<Value>,
+    otherCashflowsFromFinancingActivities: Option<Value>,
+    totalCashFromFinancingActivities: Option<Value>,
+    effectOfExchangeRate: Option<Value>,
+    changeInCash: Option<Value>,
+    repurchaseOfStock: Option<Value>,
+    issuanceOfStock: Option<Value>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -138,10 +145,14 @@ struct Value {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = format!(
+        r"https://query2.finance.yahoo.com/v10/finance/quoteSummary/{ticker}.ME?formatted=true&crumb=th3yI76E9D%2F&lang=en-US&region=US&modules=incomeStatementHistory%2CcashflowStatementHistory%2CbalanceSheetHistory%2CincomeStatementHistoryQuarterly%2CcashflowStatementHistoryQuarterly%2CbalanceSheetHistoryQuarterly&corsDomain=finance.yahoo.com",
+        ticker = "AFLT" // MOEX // GAZP // SBER // YNDX // MTSS // ALRS // LKOH // ROSN // GMKN // AFLT
+    );
     let client = reqwest::Client::builder()
         .user_agent(CHROME_USER_AGENT)
         .build()?;
-    let resp = client.get(URL).send().await?.json::<Response>().await?;
+    let resp = client.get(&url).send().await?.json::<Response>().await?;
     println!("{:#?}", resp);
     Ok(())
 }
