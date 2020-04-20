@@ -1,5 +1,37 @@
 use std::fmt;
 
+pub struct IncomeStatement {
+    revenue: f64,
+    cost_of_revenue: f64,
+    gross_profit: f64,
+    operating_expense: f64,
+    income_from_operations: f64,
+    income_before_taxes: f64,
+    net_income: f64,
+}
+
+impl IncomeStatement {
+    pub fn new(
+        revenue: f64,
+        cost_of_revenue: f64,
+        gross_profit: f64,
+        operating_expense: f64,
+        income_from_operations: f64,
+        income_before_taxes: f64,
+        net_income: f64,
+    ) -> Self {
+        IncomeStatement {
+            revenue,
+            cost_of_revenue,
+            gross_profit,
+            operating_expense,
+            income_from_operations,
+            income_before_taxes,
+            net_income,
+        }
+    }
+}
+
 pub struct BalanceSheet {
     assets: f64,
     current_assets: f64,
