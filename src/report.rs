@@ -78,3 +78,26 @@ impl fmt::Display for BalanceMismatchError {
         write!(f, "Total Assets not equal Liabilities and Equity")
     }
 }
+
+pub struct CashFlow {
+    operating_cash: f64,
+    investing_cash: f64,
+    finansing_cash: f64,
+    effect_of_exchange_rate: f64,
+}
+
+impl CashFlow {
+    pub fn new(
+        operating_cash: f64,
+        investing_cash: f64,
+        finansing_cash: f64,
+        effect_of_exchange_rate: f64,
+    ) -> Self {
+        CashFlow {
+            operating_cash,
+            investing_cash,
+            finansing_cash,
+            effect_of_exchange_rate,
+        }
+    }
+}
