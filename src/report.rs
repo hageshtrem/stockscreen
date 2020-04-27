@@ -1,5 +1,32 @@
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Report {
+    date: DateTime<Utc>,
+    income_statement: IncomeStatement,
+    balance_sheet: BalanceSheet,
+    cash_flow: CashFlow,
+}
+
+impl Report {
+    pub fn new(
+        date: DateTime<Utc>,
+        income_statement: IncomeStatement,
+        balance_sheet: BalanceSheet,
+        cash_flow: CashFlow,
+    ) -> Self {
+        Report {
+            date,
+            income_statement,
+            balance_sheet,
+            cash_flow,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct IncomeStatement {
     revenue: f64,
     cost_of_revenue: f64,
@@ -32,6 +59,7 @@ impl IncomeStatement {
     }
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct BalanceSheet {
     assets: f64,
     current_assets: f64,
@@ -79,6 +107,7 @@ impl fmt::Display for BalanceMismatchError {
     }
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CashFlow {
     operating_cash: f64,
     investing_cash: f64,
