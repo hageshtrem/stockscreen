@@ -1,3 +1,4 @@
+use std::env;
 use tonic::transport::Server;
 
 mod emitent;
@@ -8,12 +9,10 @@ use server::EmitentServiceServer;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // get from environment
-    let storage = repository::Repository::new("mongodb://localhost:27017")?;
-
+    let addr = env::var("ADDR")?.parse()?;
+    let conn_str = env::var("MONGO")?;
+    let storage = repository::Repository::new(&conn_str)?;
     let myservice = server::MyEmitentService::new(storage);
-    // get from environment
-    let addr = "[::1]:50051".parse()?;
 
     Server::builder()
         .add_service(EmitentServiceServer::new(myservice))

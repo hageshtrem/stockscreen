@@ -1,5 +1,6 @@
 use hello_world::emitent_service_client::EmitentServiceClient;
 use hello_world::EmitentServiceRequest;
+use std::env;
 
 pub mod hello_world {
     tonic::include_proto!("emitent");
@@ -7,7 +8,8 @@ pub mod hello_world {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut client = EmitentServiceClient::connect("http://[::1]:50051").await?;
+    let uri = env::args().nth(1).unwrap();
+    let mut client = EmitentServiceClient::connect(uri).await?;
 
     let request = tonic::Request::new(EmitentServiceRequest {
         name: "Sber".into(),
