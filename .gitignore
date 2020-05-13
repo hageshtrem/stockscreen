@@ -1,1 +1,4 @@
 /target
+Cargo.lock
+web-seed/pkg
+gateway/proto.pb

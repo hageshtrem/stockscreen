@@ -1,9 +1,9 @@
 version: "3.8"
 services:
   emitent:
-    build: .
-    ports:
-     - "3000:3000"
+    build: emitent-service/.
+    # ports:
+    #  - "3000:3000"
     depends_on:
       - db
     environment:
@@ -11,3 +11,22 @@ services:
      ADDR: "0.0.0.0:3000"
   db:
     image: "mongo:latest"
+  gateway:
+    build: gateway/.
+    ports: 
+      - "8080:8080"
+    depends_on:
+      - emitent
+  web-seed:
+    build:
+      context: web-seed/.
+      dockerfile: Dockerfile
+      args:
+        - API_URL="http://localhost:8080/v1"
+    ports:
+      - "80:80"
+    depends_on:
+      - gateway
+    environment:
+      PORT: "80"
+      
