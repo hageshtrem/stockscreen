@@ -1,0 +1,21 @@
+syntax = "proto3";
+package emitent;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service EmitentService {
+  rpc NewEmitent(EmitentServiceRequest) returns (EmitentServiceReply) {
+    option (google.api.http) = {
+      post : "/v1/emitent"
+      body : "*"
+    };
+  }
+}
+
+message EmitentServiceRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message EmitentServiceReply { string message = 1; }
