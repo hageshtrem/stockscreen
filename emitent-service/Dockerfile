@@ -1,9 +1,6 @@
-FROM rust:latest as builder
-WORKDIR /usr/src/emitent-service
+FROM rust-image as builder
+WORKDIR /usr/src/rust-image
 COPY . .
-RUN rustup component add rustfmt 
-# RUN rustup target add x86_64-unknown-linux-musl
-# RUN RUSTFLAGS='-C target-feature=+crt-static' cargo install --path . --target=x86_64-unknown-linux-musl
 RUN cargo install --path .
 
 FROM debian:stretch

@@ -1,4 +1,5 @@
 use crate::report;
+use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -29,9 +30,9 @@ pub enum SecurityType {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Emitent {
     #[serde(with = "bson::compat::u2f")]
-    id: u64,
-    name: String,
-    description: String,
+    pub id: u64,
+    pub name: String,
+    pub description: String,
     stocks: Vec<Security>,
     reports: Vec<report::Report>,
 }
@@ -66,8 +67,10 @@ impl Emitent {
     }
 }
 
+#[async_trait]
 pub trait EmitentRepository: Send + Sync + 'static {
     fn store(&self, e: &Emitent) -> Result<(), Box<dyn std::error::Error>>;
+    async fn get_all(&self) -> Result<Vec<Emitent>, Box<dyn std::error::Error>>;
 }
 
 // struct EmitentService {

@@ -1,4 +1,5 @@
 use crate::emitent::{Emitent, EmitentRepository};
+use async_trait::async_trait;
 use mongodb::{options::ClientOptions, Client, Database};
 
 pub struct Repository {
@@ -22,17 +23,45 @@ impl Repository {
     }
 }
 
+#[async_trait]
 impl EmitentRepository for Repository {
     fn store(&self, e: &Emitent) -> Result<(), Box<dyn std::error::Error>> {
         let collection = self.db.collection("emitents");
-        let serialized_person = bson::to_bson(e)?; // Serialize
+        let serialized_emitent = bson::to_bson(e)?; // Serialize
 
-        if let bson::Bson::Document(document) = serialized_person {
+        // TODO: Remove error double checking
+        //collection.insert_one(document, None)?; // Insert into a MongoDB collection
+
+        if let bson::Bson::Document(document) = serialized_emitent {
             collection.insert_one(document, None)?; // Insert into a MongoDB collection
         } else {
             println!("Error converting the BSON object into a MongoDB document");
         }
 
         Ok(())
+    }
+    async fn get_all(&self) -> Result<Vec<Emitent>, Box<dyn std::error::Error>> {
+        let collection = self.db.collection("emitents");
+        let mut cursor = collection.find(None, None)?;
+
+        let mut output = vec![];
+        // Iterate over the results of the cursor.
+
+        while let Some(result) = cursor.next() {
+            match result {
+                Ok(document) => {
+                    let e = bson::from_bson(bson::Bson::Document(document))?;
+                    output.push(e);
+                    // if let Some(title) = document.get("title").and_then(Bson::as_str) {
+                    //     println!("title: {}", title);
+                    // } else {
+                    //     println!("no title found");
+                    // }
+                }
+                Err(e) => return Err(e.into()),
+            }
+        }
+
+        Ok(output)
     }
 }
