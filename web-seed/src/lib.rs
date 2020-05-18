@@ -23,16 +23,39 @@ struct Reply {
     message: String,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+struct GetEmitentsReply {
+    results: Vec<Emitent>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+struct Emitent {
+    id: String, // https://developers.google.com/protocol-buffers/docs/proto3#json
+    name: String,
+    description: String,
+}
+
 #[derive(Clone)]
 enum Msg {
     NameChanged(String),
     DescriptionChanged(String),
+    FetchData,
+    DataFetched(fetch::ResponseDataResult<GetEmitentsReply>),
     Submit,
     Submitted(fetch::ResponseDataResult<Reply>),
 }
 
 fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     match msg {
+        Msg::FetchData => {
+            log!("Fetch data");
+            orders.perform_cmd(async {
+                Request::new(format!("{}/emitent", API_URL))
+                    .fetch_json_data(Msg::DataFetched)
+                    .await
+            });
+        }
+        Msg::DataFetched(result) => log!(result),
         Msg::NameChanged(name) => model.name = name,
         Msg::DescriptionChanged(description) => model.description = description,
         Msg::Submit => {
@@ -81,7 +104,14 @@ fn view(model: &Model) -> impl View<Msg> {
     ]
 }
 
+fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
+    orders.send_msg(Msg::FetchData);
+    AfterMount::default()
+}
+
 #[wasm_bindgen(start)]
 pub fn render() {
-    App::builder(update, view).build_and_start();
+    App::builder(update, view)
+        .after_mount(after_mount)
+        .build_and_start();
 }

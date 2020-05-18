@@ -1,7 +1,5 @@
-FROM rust:latest as builder
-RUN cargo install cargo-make
-RUN cargo install microserver
-WORKDIR /usr/src/web-seed
+FROM rust-image
+WORKDIR /usr/src/rust-image
 COPY . .
 # Need to set env API_URL="http://localhost/v1"
 ARG API_URL

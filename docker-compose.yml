@@ -22,7 +22,7 @@ services:
       context: web-seed/.
       dockerfile: Dockerfile
       args:
-        - API_URL="http://localhost:8080/v1"
+        API_URL: "http://localhost:8080/v1"
     ports:
       - "80:80"
     depends_on:
