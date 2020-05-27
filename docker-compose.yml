@@ -1,22 +1,31 @@
 version: "3.8"
 services:
-  emitent:
-    build: emitent-service/.
-    # ports:
-    #  - "3000:3000"
-    depends_on:
-      - db
-    environment:
-     MONGO: "mongodb://db:27017"
-     ADDR: "0.0.0.0:3000"
   db:
     image: "mongo:latest"
+    ports:
+      - "27017:27017"
+  queue:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+  emitent:
+    build: emitent-service/.
+    restart: always
+    ports:
+     - "3000:3000"
+    depends_on:
+      - db
+      - queue
+    environment:
+     MONGO: "mongodb://db:27017"
+     RABBIT: "amqp://queue:5672/%2f"
+     ADDR: "0.0.0.0:3000"
   gateway:
     build: gateway/.
     ports: 
       - "8080:8080"
-    depends_on:
-      - emitent
+    # depends_on:
+    #   - emitent
   web-seed:
     build:
       context: web-seed/.
@@ -25,8 +34,8 @@ services:
         API_URL: "http://localhost:8080/v1"
     ports:
       - "80:80"
-    depends_on:
-      - gateway
+    # depends_on:
+    #   - gateway
     environment:
       PORT: "80"
       

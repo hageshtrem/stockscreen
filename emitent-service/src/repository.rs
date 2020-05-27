@@ -1,5 +1,6 @@
 use crate::emitent::{Emitent, EmitentRepository};
 use async_trait::async_trait;
+use log::error;
 use mongodb::{options::ClientOptions, Client, Database};
 
 pub struct Repository {
@@ -35,7 +36,7 @@ impl EmitentRepository for Repository {
         if let bson::Bson::Document(document) = serialized_emitent {
             collection.insert_one(document, None)?; // Insert into a MongoDB collection
         } else {
-            println!("Error converting the BSON object into a MongoDB document");
+            error!("Error converting the BSON object into a MongoDB document");
         }
 
         Ok(())
